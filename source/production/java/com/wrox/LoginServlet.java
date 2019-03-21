@@ -1,6 +1,9 @@
+// Noah Villagomez
+// 3/21/2019
+
 package com.wrox;
 
-
+import java.sql.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -8,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -20,10 +26,16 @@ public class LoginServlet extends HttpServlet
     private static final Map<String, String> userDatabase = new Hashtable<>();
 
     static {
-        userDatabase.put("Nicholas", "password");
-        userDatabase.put("Sarah", "drowssap");
-        userDatabase.put("Mike", "wordpass");
-        userDatabase.put("John", "green");
+    	try{
+    		Class.forName("com.mysql.jdbc.Driver");
+    		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/customersupport","root", "password");
+    		Statement stmt=con.createStatement();
+    		ResultSet rs=stmt.executeQuery("select * from User");
+    		while(rs.next()){
+    		System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getString(5));
+    		userDatabase.put(rs.getString(2), rs.getString(5));
+    		}
+    	}catch(Exception e){ System.out.println(e);}
     }
 
     @Override
